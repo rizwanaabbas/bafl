@@ -1,0 +1,47 @@
+<?php
+/** @var $block \Magento\Framework\View\Element\AbstractBlock*/
+$order = $block->getOrder();
+$AuthToken = $block->getBaflAuthToken();
+$paymentHash = $block->getPaymentRequestHash();
+?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
+<strong>
+    Please wait while we are redirecting you to Bank Alfalah Payment...
+</strong>
+<?php if($AuthToken){ ?>
+    <form action="<?php /* @escapeNotVerified */ echo $block->getPaymentRequestUrl(); ?>" id="PageRedirectionForm" method="post" novalidate="novalidate">
+     	<input id="AuthToken" name="AuthToken" type="hidden" value="<?php /* @escapeNotVerified */ echo $AuthToken; ?>" />
+     	<input id="RequestHash" name="RequestHash" type="hidden" value="<?php /* @escapeNotVerified */ echo $paymentHash; ?>" />
+     	<input id="ChannelId" name="ChannelId" type="hidden" value="1001" />
+     	<input id="Currency" name="Currency" type="hidden" value="PKR" />
+     	<input id="ReturnURL" name="ReturnURL" type="hidden" value="<?php /* @escapeNotVerified */ echo $this->getUrl('checkout/onepage/success') ?>" />
+        <input id="MerchantId" name="MerchantId" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getMerchantId(); ?>" />
+        <input id="StoreId" name="StoreId" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getStoreId(); ?>" />
+     	<input id="MerchantHash" name="MerchantHash" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getMerchantHash(); ?>" />
+     	<input id="MerchantUsername" name="MerchantUsername" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getMerchantUsername(); ?>" />
+     	<input id="MerchantPassword" name="MerchantPassword" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getMerchantPassword(); ?>" />
+        <input id="TransactionTypeId" name="TransactionTypeId" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getPaymentCode(); ?>" />
+     	<input id="TransactionReferenceNumber" name="TransactionReferenceNumber" type="hidden" value="<?php /* @escapeNotVerified */ echo $order->getIncrementId(); ?>" />
+     	<input id="TransactionAmount" name="TransactionAmount" type="hidden" value="<?php /* @escapeNotVerified */ echo number_format($order->getGrandTotal()); ?>" />
+        <button style="display: none;" type="submit" class="btn btn-custon-four btn-danger" id="run">RUN</button>
+    </form>
+
+    <script type="text/javascript">
+        require([
+            'jquery',
+            'mage/loader'
+        ], function ($, loader) {
+            $(function () {
+                var checkRequestHash = setInterval(function() {
+                    if ($("#RequestHash").val() != "") {
+                        $('body').loader('show');
+                        document.getElementById("PageRedirectionForm").submit();
+                        clearInterval(checkRequestHash);
+                    }
+                }, 100);
+            });
+        });
+    </script>
+
+<?php } ?>

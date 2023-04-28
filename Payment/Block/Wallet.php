@@ -1,0 +1,24 @@
+<?php
+/**
+ * Copyright © 2020 BAFL. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+namespace Bafl\Payment\Block;
+
+use Magento\Framework\Phrase;
+use Magento\Payment\Block\ConfigurableInfo;
+
+class Wallet extends ConfigurableInfo
+{
+    /**
+     * Returns label
+     *
+     * @param string $field
+     * @return Phrase
+     */
+    protected function getLabel($field)
+    {
+        return __($field);
+    }
+
+}
